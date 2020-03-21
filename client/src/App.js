@@ -7,7 +7,7 @@ import RoomList from './components/RoomList'
 import NewRoomForm from './components/NewRoomForm'
 import { tokenUrl, instanceLocator } from './config'
 
-const App = =()=> {
+const App =()=> {
   return (
     <Form />
     );
