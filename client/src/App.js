@@ -7,12 +7,6 @@ import RoomList from './components/RoomList'
 import NewRoomForm from './components/NewRoomForm'
 import { tokenUrl, instanceLocator } from './config'
 
-const App =()=> {
-  return (
-    <Form />
-    );
-};
-
 class App extends React.Component {
 
   constructor(props) {
