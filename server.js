@@ -2,11 +2,14 @@ const express = require("express");
 const path = require("path");
 const PORT = process.env.PORT || 3001;
 const app = express();
+const mysql = require("mysql");
 
-// Define middleware here
+
+
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// Serve up static assets (usually on heroku)
+
 const root = require('path').join(__dirname, 'client', 'build')
 app.use(express.static(root));
 
@@ -18,4 +21,19 @@ app.get("*", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🌎 ==> API server now on port ${PORT}!`);
+});
+
+
+
+const connection = mysql.createConnection({
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  password: "root",
+  database: "chatDB"
+});
+
+connection.connect(function (err) {
+  if (err) throw err;
+  runSearch();
 });
