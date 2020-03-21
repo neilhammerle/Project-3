@@ -5,6 +5,13 @@ const app = express();
 const mysql = require("mysql");
 
 
+const connection = mysql.createConnection({
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  password: "root",
+  database: "chatDB"
+});
 
 
 app.use(express.urlencoded({ extended: true }));
@@ -19,21 +26,13 @@ app.get("*", (req, res) => {
   });
 })
 
-app.listen(PORT, () => {
-  console.log(`🌎 ==> API server now on port ${PORT}!`);
-});
 
-
-
-const connection = mysql.createConnection({
-  host: "localhost",
-  port: 3306,
-  user: "root",
-  password: "root",
-  database: "chatDB"
-});
 
 connection.connect(function (err) {
   if (err) throw err;
-  runSearch();
+  //runSearch();
+  app.listen(PORT, () => {
+    console.log(`🌎 ==> API server now on port ${PORT}!`);
+  });
+  console.log("hello")
 });
