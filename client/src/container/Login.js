@@ -12,6 +12,7 @@ export default function Login(props) {
 
     function handleSubmit(event) {
         event.preventDefault();
+        props.handleLogin(email)
     }
 
     return (
