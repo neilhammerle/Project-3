@@ -1,11 +1,11 @@
 import React from 'react';
 import Login from './container/Login';
-import Chatkit from '@pusher/chatkit-client'
+//import Chatkit from '@pusher/chatkit-client'
 //import MessageList from './components/MessageList'
 //import SendMessageForm from './components/SendMessageForm'
 //import RoomList from './components/RoomList'
 //import NewRoomForm from './components/NewRoomForm'
-import { tokenUrl, instanceLocator } from './config'
+//import { tokenUrl, instanceLocator } from './config'
 
 class App extends React.Component {
 
