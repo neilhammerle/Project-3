@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Auth } from "aws-amplify";
 import { Link, withRouter } from "react-router-dom";
@@ -5,6 +6,8 @@ import { Nav, Navbar, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import Routes from "./Routes";
 import "./App.css";
+
+import Login from './container/Login';
 
 
 function App(props) {
