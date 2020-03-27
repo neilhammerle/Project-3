@@ -1,126 +1,74 @@
-import React from 'react';
+
+import React, { useState, useEffect } from "react";
+import { Auth } from "aws-amplify";
+import { Link, withRouter } from "react-router-dom";
+import { Nav, Navbar, NavItem } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
+import Routes from "./Routes";
+import "./App.css";
+
 import Login from './container/Login';
-//import Chatkit from '@pusher/chatkit-client'
-//import MessageList from './components/MessageList'
-//import SendMessageForm from './components/SendMessageForm'
-//import RoomList from './components/RoomList'
-//import NewRoomForm from './components/NewRoomForm'
-//import { tokenUrl, instanceLocator } from './config'
 
-class App extends React.Component {
 
-  constructor(props) {
-    super(props)
+function App(props) {
+  const [isAuthenticating, setIsAuthenticating] = useState(true);
+  const [isAuthenticated, userHasAuthenticated] = useState(false);
 
-    this.state = {
-      roomId: null,
-      messages: [],
-      joinableRooms: [],
-      joinedRooms: [],
-      userId: ""
+  useEffect(() => {
+    onLoad();
+  }, []);
+
+  async function onLoad() {
+    try {
+      await Auth.currentSession();
+      userHasAuthenticated(true);
     }
-    this.sendMessage = this.sendMessage.bind(this)
-    this.subscribeToRoom = this.subscribeToRoom.bind(this)
-    this.getRooms = this.getRooms.bind(this)
-    this.createRoom = this.createRoom.bind(this)
-  }
+    catch (e) {
+      if (e !== 'No current user') {
 
-  handleLogin = (userId) => {
-    this.setState({
-      userId
-    })
-  }
-  // componentDidMount() {
-  //   const chatManager = new Chatkit.ChatManager({
-  //     instanceLocator,
-  //     userId: this.state.userId,
-  //     tokenProvider: new Chatkit.TokenProvider({
-  //       url: tokenUrl
-  //     })
-  //   })
-
-  //   chatManager.connect()
-  //     .then(currentUser => {
-  //       this.currentUser = currentUser
-  //       this.getRooms()
-  //     })
-  //     .catch(err => console.log('error on connecting', err))
-  // }
-
-
-  getRooms = () => {
-    this.currentUser.getJoinableRooms()
-      .then(joinableRooms => {
-        this.setState({
-          joinableRooms,
-          joinedRooms: this.currentUser.rooms
-        })
-      })
-      .catch(err => console.log('error on joinableRooms', err))
-  }
-
-
-  subscribeToRoom = (roomId) => {
-    this.setState({ messages: [] })
-    this.currentUser.subscribeToRoom({
-      roomId: roomId,
-      hooks: {
-        onMessage: message => {
-          this.setState({
-            messages: [...this.state.messages, message]
-          })
-        }
       }
-    })
-      .then(room => {
-        this.setState({
-          roomId: room.id
-        })
-        this.getRooms()
-      })
-      .catch(err => console.log('Error on subscribing room', err))
-  }
-
-
-  sendMessage = (text) => {
-    this.currentUser.sendMessage({
-      text,
-      roomId: this.state.roomId
-    })
-
-  }
-
-  createRoom = (name) => {
-    //console.log('Room Name: ', name)
-    this.currentUser.createRoom({
-      name
-    })
-      .then(room => this.subscribeToRoom(room.id))
-      .catch(err => console.log('Error in creating Room ', err))
-  }
-
-  render() {
-    const { joinableRooms, joinedRooms } = this.state
-    // console.log('message :', this.state.messages);
-    if (!this.state.userId) {
-      return (
-        <Login handleLogin={this.handleLogin} />
-      )
     }
-    return (
-      <div className="app">
-        {/* <RoomList
-          roomId={this.state.roomId}
-          subscribeToRoom={this.subscribeToRoom}
-          rooms={[...joinableRooms, ...joinedRooms]}
-        />
-        <MessageList messages={this.state.messages} roomId={this.state.roomId} />
-        <SendMessageForm disabled={!this.state.roomId} sendMessage={this.sendMessage} />
-        <NewRoomForm createRoom={this.createRoom} /> */}
-        hello {this.state.userId}
-      </div>
-    );
+
+    setIsAuthenticating(false);
   }
+
+  async function handleLogout() {
+    await Auth.signOut();
+
+    userHasAuthenticated(false);
+
+    props.history.push("/login");
+  }
+
+  return (
+    !isAuthenticating &&
+    <div className="App container">
+      <Navbar fluid collapseOnSelect>
+        <Navbar.Header>
+          <Navbar.Brand>
+            <Link to="/">ChadderBox</Link>
+          </Navbar.Brand>
+          <Navbar.Toggle />
+        </Navbar.Header>
+        <Navbar.Collapse>
+          <Nav pullRight>
+            {isAuthenticated
+              ? <NavItem onClick={handleLogout}>Logout</NavItem>
+              : <>
+                <LinkContainer to="/signup">
+                  <NavItem>Signup</NavItem>
+                </LinkContainer>
+                <LinkContainer to="/login">
+                  <NavItem>Login</NavItem>
+                </LinkContainer>
+              </>
+            }
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+      <Routes appProps={{ isAuthenticated, userHasAuthenticated }} />
+    </div>
+  );
 }
 
-export default App
+export default withRouter(App);
